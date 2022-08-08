@@ -1,0 +1,2474 @@
+# Initialize parent node variable.
+if locals().get("hou_parent") is None:
+    hou_parent = hou.node("/obj/BEACH_FLIP")
+
+# Code for /obj/BEACH_FLIP/flipsolver1
+hou_node = hou_parent.createNode("flipsolver::2.0", "flipsolver1", run_init_scripts=False, load_contents=True, exact_type_name=True)
+hou_node.move(hou.Vector2(0.0839285, 2.62863))
+hou_node.bypass(False)
+hou_node.setDisplayFlag(False)
+hou_node.hide(False)
+hou_node.setSelected(True)
+
+hou_parm_template_group = hou.ParmTemplateGroup()
+# Code for parameter template
+hou_parm_template = hou.FolderParmTemplate("folder2", "Substeps", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template2 = hou.FloatParmTemplate("timescale", "Time Scale", 1, default_value=([1]), min=0, max=10, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.IntParmTemplate("minimumsubsteps", "Min Substeps", 1, default_value=([1]), min=1, max=10, min_is_strict=True, max_is_strict=False, naming_scheme=hou.parmNamingScheme.Base1, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False)
+hou_parm_template2.setTags({"autoscope": "0000000000000000"})
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.IntParmTemplate("substeps", "Max Substeps", 1, default_value=([2]), min=1, max=10, min_is_strict=True, max_is_strict=False, naming_scheme=hou.parmNamingScheme.Base1, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False)
+hou_parm_template2.setTags({"autoscope": "0000000000000000"})
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FloatParmTemplate("cflcond", "CFL Condition", 1, default_value=([1]), min=0, max=10, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template2.setTags({"autoscope": "0000000000000000"})
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FloatParmTemplate("partcflcond", "Particle Advection CFL", 1, default_value=([0.75]), min=0, max=10, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template2.setTags({"autoscope": "0000000000000000"})
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.ToggleParmTemplate("quantize", "Quantize to Max Substeps", default_value=True, default_expression='on', default_expression_language=hou.scriptLanguage.Hscript)
+hou_parm_template2.setTags({"autoscope": "0000000000000000", "script_callback": ""})
+hou_parm_template.addParmTemplate(hou_parm_template2)
+hou_parm_template_group.append(hou_parm_template)
+# Code for parameter template
+hou_parm_template = hou.FolderParmTemplate("folder2_1", "Particle Motion", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template2 = hou.ToggleParmTemplate("doforces", "Apply External Forces", default_value=True)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.ToggleParmTemplate("enablevolumeattrib", "enablevolumeattrib", default_value=False)
+hou_parm_template2.hideLabel(True)
+hou_parm_template2.setJoinWithNext(True)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.StringParmTemplate("volumeoverrideattrib", "Force Override", 1, default_value=(["ballistic"]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.Regular, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template2.setConditional(hou.parmCondType.DisableWhen, "{ enablevolumeattrib == 0 }")
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.MenuParmTemplate("underresolved", "Under-Resolved Particles", menu_items=(["nodetect","detectonly","ballistic","extrapolated","kill"]), menu_labels=(["No Detection","Detect Only","Treat as Ballistic","Use Extrapolated Velocity","Kill"]), default_value=3, icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False, is_button_strip=False, strip_uses_icons=False)
+hou_parm_template2.setConditional(hou.parmCondType.DisableWhen, "{ veltransfer == apic }")
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.MenuParmTemplate("collision", "Collision Detection", menu_items=(["none","particle","movetoiso"]), menu_labels=(["None","Particle","Move Outside Collision"]), default_value=1, icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False, is_button_strip=False, strip_uses_icons=False)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.ToggleParmTemplate("killunmoveable", "Kill Unmoveable Particles", default_value=False, default_expression='off', default_expression_language=hou.scriptLanguage.Hscript)
+hou_parm_template2.setConditional(hou.parmCondType.DisableWhen, "{ collision != movetoiso }")
+hou_parm_template2.setTags({"autoscope": "0000000000000000"})
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FolderParmTemplate("folder3", "Behavior", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("tankcollision", "Collide with Volume Limits", default_value=True)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ usewaterline == 1 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("killoutside", "Kill Outside Volume Limits", default_value=True, default_expression='on', default_expression_language=hou.scriptLanguage.Hscript)
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("usephysparms", "Use Friction and Bounce", default_value=False, default_expression='off', default_expression_language=hou.scriptLanguage.Hscript)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ collision != particle }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("doid", "Add ID Attribute", default_value=False)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("doage", "Age Particles", default_value=False, default_expression='off', default_expression_language=hou.scriptLanguage.Hscript)
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("doreapparticles", "Reap Particles", default_value=False, default_expression='off', default_expression_language=hou.scriptLanguage.Hscript)
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.StringParmTemplate("delattribs", "Delete Attributes", 1, default_value=(["underresolved"]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.Regular, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FolderParmTemplate("folder3_1", "Reseeding", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("reseed", "Reseed Particles", default_value=True)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ donarrowband == 1 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.IntParmTemplate("partpervoxel", "Particles Per Voxel", 1, default_value=([8]), min=0, max=10, min_is_strict=False, max_is_strict=False, naming_scheme=hou.parmNamingScheme.Base1, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ reseed == 0 donarrowband == 0 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("oversampling", "Surface Oversampling", 1, default_value=([1.5]), min=1, max=2, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ reseed == 0 donarrowband == 0 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("oversamplingbandwidth", "Oversampling Bandwidth", 1, default_value=([1]), min=0, max=4, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ reseed == 0 donarrowband == 0 } { oversampling <= 1 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("oversamplebounds", "Oversample At Boundaries", default_value=True, default_expression='on', default_expression_language=hou.scriptLanguage.Hscript)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ reseed == 0 donarrowband == 0 } { oversampling <= 1 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("birththreshold", "Birth Threshold", 1, default_value=([0.5]), min=0, max=1, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ reseed == 0 donarrowband == 0 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("deaththreshold", "Death Threshold", 1, default_value=([1.5]), min=1, max=2, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ reseed == 0 donarrowband == 0 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("seed", "Random Seed", 1, default_value=([0]), min=0, max=10, min_is_strict=True, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ reseed == 0 donarrowband == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.StringParmTemplate("interpattribs", "Interpolate Attributes", 1, default_value=(["v vorticity rest rest2"]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.Regular, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ reseed == 0 donarrowband == 0 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000", "script_callback": ""})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FolderParmTemplate("folder3_2", "Separation", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("partsep", "Apply Particle Separation", default_value=False)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.IntParmTemplate("partsepiter", "Separation Iterations", 1, default_value=([1]), min=0, max=10, min_is_strict=False, max_is_strict=False, naming_scheme=hou.parmNamingScheme.Base1, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ partsep == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("partsepamount", "Separation Rate", 1, default_value=([1]), min=0, max=1, min_is_strict=True, max_is_strict=True, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ partsep == 0 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("partsepscale", "Separation Scale", 1, default_value=([1.0985]), min=0, max=10, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ partsep == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FolderParmTemplate("folder3_3", "Droplets", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("dodroplets", "Detect Droplets", default_value=False)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("dropletmindensity", "Min Particle Density", 1, default_value=([0.5]), min=0, max=2, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ dodroplets == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("dropletmaxdensity", "Max Particle Density", 1, default_value=([1]), min=0, max=2, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ dodroplets == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.MenuParmTemplate("dropletbehavior", "Behavior", menu_items=(["0","1","2"]), menu_labels=(["Blend With Fluid","Kill On Detection","Kill At Fluid"]), default_value=0, icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False, is_button_strip=False, strip_uses_icons=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ dodroplets == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("dropletvelblend", "Velocity Blend", 1, default_value=([0.2]), min=0, max=1, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ dodroplets == 0 } { dropletbehavior != 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FolderParmTemplate("folder3_4", "Vorticity", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("dovorticity", "Add Vorticity Attribute", default_value=False)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("vorticitypreserve", "Preservation Rate", 1, default_value=([0.1]), min=0, max=1, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ dovorticity == 0 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.MenuParmTemplate("vorticitymix", "Mix Method", menu_items=(["copy","add","sub","mul","div","max","min","average"]), menu_labels=(["Copy","Add","Subtract","Multiply","Divide","Maximum","Minimum","Average"]), default_value=5, icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False, is_button_strip=False, strip_uses_icons=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ dovorticity == 0 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("vorticityscale", "Vorticity Scale", 1, default_value=([1]), min=0, max=10, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ dovorticity == 0 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FolderParmTemplate("folder3_5", "Rest", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("enable_rest", "Add Rest Attribute", default_value=False)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("dual_rest_attributes", "Dual Rest Attributes", default_value=True)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ enable_rest == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.IntParmTemplate("rest_framedelay", "Frames Between Reset", 1, default_value=([50]), min=0, max=10, min_is_strict=False, max_is_strict=False, naming_scheme=hou.parmNamingScheme.Base1, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ enable_rest == 0 } { dual_rest_attributes == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.IntParmTemplate("rest_frameoffset", "Frame Offset", 1, default_value=([1]), min=0, max=10, min_is_strict=False, max_is_strict=False, naming_scheme=hou.parmNamingScheme.Base1, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ enable_rest == 0 } { dual_rest_attributes == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+hou_parm_template_group.append(hou_parm_template)
+# Code for parameter template
+hou_parm_template = hou.FolderParmTemplate("folder2_2", "Volume Motion", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template2 = hou.MenuParmTemplate("veltransfer", "Velocity Transfer", menu_items=(["flip","apic"]), menu_labels=(["FLIP (Splashy)","APIC (Swirly)"]), default_value=0, icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False, is_button_strip=False, strip_uses_icons=False)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FloatParmTemplate("volumeamount", "Force Scale", 1, default_value=([1]), min=0, max=1, min_is_strict=True, max_is_strict=True, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template2.setConditional(hou.parmCondType.DisableWhen, "{ veltransfer != flip }")
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FloatParmTemplate("smoothing", "Velocity Smoothing", 1, default_value=([0.1]), min=0, max=1, min_is_strict=True, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template2.setConditional(hou.parmCondType.DisableWhen, "{ veltransfer != flip }")
+hou_parm_template2.setTags({"units": ""})
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.ToggleParmTemplate("surfacereinit", "Smooth Surface", default_value=True)
+hou_parm_template2.setConditional(hou.parmCondType.DisableWhen, "{ donarrowband == 1 }")
+hou_parm_template2.setTags({"units": ""})
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.MenuParmTemplate("updatesurface", "Update Surface", menu_items=(["none","advect","rebuild"]), menu_labels=(["None","Advect","Rebuild"]), default_value=1, icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False, is_button_strip=False, strip_uses_icons=False)
+hou_parm_template2.setConditional(hou.parmCondType.DisableWhen, "{ donarrowband == 1 }")
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.MenuParmTemplate("updatevel", "Update Velocity", menu_items=(["none","advect","rebuild"]), menu_labels=(["None","Advect","Rebuild"]), default_value=1, icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False, is_button_strip=False, strip_uses_icons=False)
+hou_parm_template2.setConditional(hou.parmCondType.DisableWhen, "{ donarrowband == 1 }")
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FolderParmTemplate("folder2_2_5", "Volume Limits", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("vislimit", "Visualize Limits", default_value=True)
+hou_parm_template3.hideLabel(True)
+hou_parm_template3.setJoinWithNext(True)
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("vislimitcolor", "Visualize Limits", 3, default_value=([0.49773, 0.3753, 0.9]), min=0, max=1, min_is_strict=False, max_is_strict=False, look=hou.parmLook.ColorSquare, naming_scheme=hou.parmNamingScheme.RGBA)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ vislimit == 0 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("limit_size", "Box Size", 3, default_value=([50, 50, 50]), min=0, max=10, min_is_strict=True, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.XYZW)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("limit_t", "Box Center", 3, default_value=([0, 0, 0]), min=-1, max=1, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.XYZW)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("dynamicresize", "Dynamically Resize Fields", default_value=True)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("fillnewvolume", "Fill New Volume", default_value=False)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("usewaterline", "Use Waterline", default_value=False, default_expression='off', default_expression_language=hou.scriptLanguage.Hscript)
+hou_parm_template3.setScriptCallbackLanguage(hou.scriptLanguage.Python)
+hou_parm_template3.setTags({"autoscope": "0000000000000000", "script_callback": "", "script_callback_language": "python"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("visualwaterline", "Visualize Waterline", default_value=False)
+hou_parm_template3.setConditional(hou.parmCondType.HideWhen, "{ usewaterline == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("waterline", "Waterline", 1, default_value=([0]), min=0, max=10, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.HideWhen, "{ usewaterline == 0 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("waterlinedirection", "Waterline Direction", 3, default_value=([0, 1, 0]), min=-1, max=1, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.XYZW)
+hou_parm_template3.setConditional(hou.parmCondType.HideWhen, "{ usewaterline == 0 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("useboundarylayer", "Use Boundary Layer", default_value=False)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("applybound", "Apply Boundary Velocities", default_value=False)
+hou_parm_template3.setConditional(hou.parmCondType.HideWhen, "{ useboundarylayer == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("boundary_lowerpadding", "Lower Padding", 3, default_value=([0, 0, 0]), min=0, max=1, min_is_strict=True, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.XYZW)
+hou_parm_template3.setConditional(hou.parmCondType.HideWhen, "{ useboundarylayer == 0 }")
+hou_parm_template3.setTags({"units": "m1"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("boundary_upperpadding", "Upper Padding", 3, default_value=([0, 0, 0]), min=0, max=1, min_is_strict=True, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.XYZW)
+hou_parm_template3.setConditional(hou.parmCondType.HideWhen, "{ useboundarylayer == 0 }")
+hou_parm_template3.setTags({"units": "m1"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.StringParmTemplate("boundary_surface", "Surface Volume", 1, default_value=([""]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.NodeReference, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template3.setConditional(hou.parmCondType.HideWhen, "{ useboundarylayer == 0 }")
+hou_parm_template3.setTags({"opfilter": "!!SOP!!", "oprelative": "."})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.StringParmTemplate("boundary_velocity", "Velocity Volume", 1, default_value=([""]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.NodeReference, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template3.setConditional(hou.parmCondType.HideWhen, "{ useboundarylayer == 0 }")
+hou_parm_template3.setTags({"opfilter": "!!SOP!!", "oprelative": "."})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FolderParmTemplate("folder2_2_5_1", "Collisions", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("collisionvelscale", "Velocity Scale", 1, default_value=([1]), min=1, max=4, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.MenuParmTemplate("veltype", "Velocity Type", menu_items=(["rigid","point","volume"]), menu_labels=(["Rigid","Point","Volume"]), default_value=1, icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False, is_button_strip=False, strip_uses_icons=False)
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("extrapdist", "Surface Extrapolation", 1, default_value=([0.5]), min=0, max=1, min_is_strict=True, max_is_strict=True, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.MenuParmTemplate("fractionmethod", "Volume Fraction Method", menu_items=(["supersample","face","tetrahedral","none"]), menu_labels=(["Collision Supersampling","Voxel Face Area","Tetrahedral","None"]), default_value=1, icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False, is_button_strip=False, strip_uses_icons=False)
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.IntParmTemplate("numsupersamples", "Samples Per Axis", 1, default_value=([2]), min=1, max=4, min_is_strict=True, max_is_strict=False, naming_scheme=hou.parmNamingScheme.Base1, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ fractionmethod != supersample }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("usetransparency", "Use Transparency", default_value=False)
+hou_parm_template3.hideLabel(True)
+hou_parm_template3.setJoinWithNext(True)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("transparency", "Transparency", 1, default_value=([0]), min=0, max=1, min_is_strict=True, max_is_strict=True, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ usetransparency == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FolderParmTemplate("stickoncollisionfolder2", "Stick On Collision", folder_type=hou.folderType.Simple, default_value=0, ends_tab_group=False)
+hou_parm_template3.setTags({"group_type": "simple"})
+# Code for parameter template
+hou_parm_template4 = hou.ToggleParmTemplate("enablestick", "Stick on Collision", default_value=True)
+hou_parm_template3.addParmTemplate(hou_parm_template4)
+# Code for parameter template
+hou_parm_template4 = hou.FloatParmTemplate("stickscale", "Stick Scale", 1, default_value=([0.1]), min=0, max=1, min_is_strict=True, max_is_strict=True, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template4.setConditional(hou.parmCondType.DisableWhen, "{ enablestick == 0 }")
+hou_parm_template4.setConditional(hou.parmCondType.HideWhen, "{ enablestick == 0 }")
+hou_parm_template4.setTags({"autoscope": "0000000000000000", "parmvop": "1", "shaderparmcontexts": "cvex"})
+hou_parm_template3.addParmTemplate(hou_parm_template4)
+# Code for parameter template
+hou_parm_template4 = hou.ToggleParmTemplate("stickusemaxdist", "Use Max Distance", default_value=True, default_expression='on', default_expression_language=hou.scriptLanguage.Hscript)
+hou_parm_template4.setConditional(hou.parmCondType.DisableWhen, "{ enablestick == 0 }")
+hou_parm_template4.setConditional(hou.parmCondType.HideWhen, "{ enablestick == 0 }")
+hou_parm_template4.hideLabel(True)
+hou_parm_template4.setJoinWithNext(True)
+hou_parm_template4.setTags({"autoscope": "0000000000000000", "parmvop": "1", "shaderparmcontexts": "cvex"})
+hou_parm_template3.addParmTemplate(hou_parm_template4)
+# Code for parameter template
+hou_parm_template4 = hou.FloatParmTemplate("stickdist", "Max Distance", 1, default_value=([0.05]), min=0, max=1, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template4.setConditional(hou.parmCondType.DisableWhen, "{ enablestick == 0 } { stickusemaxdist == 0 }")
+hou_parm_template4.setConditional(hou.parmCondType.HideWhen, "{ enablestick == 0 }")
+hou_parm_template4.setTags({"autoscope": "0000000000000000", "parmvop": "1", "shaderparmcontexts": "cvex", "units": "m1"})
+hou_parm_template3.addParmTemplate(hou_parm_template4)
+# Code for parameter template
+hou_parm_template4 = hou.ToggleParmTemplate("stickusemaxcells", "Use Max Cells", default_value=False, default_expression='off', default_expression_language=hou.scriptLanguage.Hscript)
+hou_parm_template4.setConditional(hou.parmCondType.DisableWhen, "{ enablestick == 0 }")
+hou_parm_template4.setConditional(hou.parmCondType.HideWhen, "{ enablestick == 0 }")
+hou_parm_template4.hideLabel(True)
+hou_parm_template4.setJoinWithNext(True)
+hou_parm_template4.setTags({"autoscope": "0000000000000000", "parmvop": "1", "shaderparmcontexts": "cvex"})
+hou_parm_template3.addParmTemplate(hou_parm_template4)
+# Code for parameter template
+hou_parm_template4 = hou.FloatParmTemplate("stickcells", "Max Cells", 1, default_value=([1]), min=0, max=1, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template4.setConditional(hou.parmCondType.DisableWhen, "{ enablestick == 0 } { stickusemaxcells == 0 }")
+hou_parm_template4.setConditional(hou.parmCondType.HideWhen, "{ enablestick == 0 }")
+hou_parm_template4.setTags({"autoscope": "0000000000000000", "parmvop": "1", "shaderparmcontexts": "cvex"})
+hou_parm_template3.addParmTemplate(hou_parm_template4)
+# Code for parameter template
+hou_parm_template4 = hou.FloatParmTemplate("stickbias", "Stick Bias", 1, default_value=([0.5]), min=0, max=1, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template4.setConditional(hou.parmCondType.DisableWhen, "{ enablestick == 0 }")
+hou_parm_template4.setConditional(hou.parmCondType.HideWhen, "{ enablestick == 0 }")
+hou_parm_template4.setTags({"autoscope": "0000000000000000", "parmvop": "1", "shaderparmcontexts": "cvex"})
+hou_parm_template3.addParmTemplate(hou_parm_template4)
+# Code for parameter template
+hou_parm_template4 = hou.FloatParmTemplate("sticknormalscale", "Normal Scale", 1, default_value=([1]), min=0, max=1, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template4.setConditional(hou.parmCondType.DisableWhen, "{ enablestick == 0 }")
+hou_parm_template4.setConditional(hou.parmCondType.HideWhen, "{ enablestick == 0 }")
+hou_parm_template4.setTags({"autoscope": "0000000000000000", "parmvop": "1", "shaderparmcontexts": "cvex"})
+hou_parm_template3.addParmTemplate(hou_parm_template4)
+# Code for parameter template
+hou_parm_template4 = hou.FloatParmTemplate("sticktangentscale", "Tangent Scale", 1, default_value=([1]), min=0, max=1, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template4.setConditional(hou.parmCondType.DisableWhen, "{ enablestick == 0 }")
+hou_parm_template4.setConditional(hou.parmCondType.HideWhen, "{ enablestick == 0 }")
+hou_parm_template4.setTags({"autoscope": "0000000000000000", "parmvop": "1", "shaderparmcontexts": "cvex"})
+hou_parm_template3.addParmTemplate(hou_parm_template4)
+# Code for parameter template
+hou_parm_template4 = hou.ToggleParmTemplate("stickusecontrolfield", "Use Control Field", default_value=False, default_expression='off', default_expression_language=hou.scriptLanguage.Hscript)
+hou_parm_template4.setConditional(hou.parmCondType.DisableWhen, "{ enablestick == 0 }")
+hou_parm_template4.setConditional(hou.parmCondType.HideWhen, "{ enablestick == 0 }")
+hou_parm_template4.hideLabel(True)
+hou_parm_template4.setJoinWithNext(True)
+hou_parm_template4.setTags({"autoscope": "0000000000000000", "parmvop": "1", "shaderparmcontexts": "cvex"})
+hou_parm_template3.addParmTemplate(hou_parm_template4)
+# Code for parameter template
+hou_parm_template4 = hou.StringParmTemplate("stickcontrolfield", "Control Field", 1, default_value=(["stick"]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.Regular, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template4.setConditional(hou.parmCondType.DisableWhen, "{ enablestick == 0 } { stickusecontrolfield == 0 }")
+hou_parm_template4.setConditional(hou.parmCondType.HideWhen, "{ enablestick == 0 }")
+hou_parm_template4.setTags({"autoscope": "0000000000000000"})
+hou_parm_template3.addParmTemplate(hou_parm_template4)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FolderParmTemplate("folder2_2_5_2", "Viscosity", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("viscosity", "Enable Viscosity", default_value=False)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("useadaptiveviscosity", "Solve Viscosity with Adaptivity", default_value=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ viscosity == 0 }")
+hou_parm_template3.setScriptCallbackLanguage(hou.scriptLanguage.Python)
+hou_parm_template3.setTags({"script_callback_language": "python"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("doviscosity", "Viscosity by Attribute", default_value=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ viscosity == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.StringParmTemplate("viscosityattrib", "Attribute Name", 1, default_value=(["viscosity"]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.Regular, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ doviscosity == 0 } { viscosity == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.MenuParmTemplate("viscositymix", "Mix Method", menu_items=(["copy","add","sub","mul","div","max","min","average"]), menu_labels=(["Copy","Add","Subtract","Multiply","Divide","Maximum","Minimum","Average"]), default_value=0, default_expression='copy', default_expression_language=hou.scriptLanguage.Hscript, icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False, is_button_strip=False, strip_uses_icons=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ doviscosity == 0 } { viscosity == 0 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("viscosityscale", "Viscosity Scale", 1, default_value=([1]), min=0, max=10000, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Logarithmic, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ doviscosity == 0 } { viscosity == 0 }")
+hou_parm_template3.setTags({"units": ""})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.MenuParmTemplate("viscosityprecision", "Float Precision", menu_items=(["f32b","f64b"]), menu_labels=(["Float 32-bit","Float 64-bit"]), default_value=1, icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False, is_button_strip=False, strip_uses_icons=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ viscosity == 0 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("enableslip", "Slip on Collision", default_value=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ viscosity == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("slipscale", "Slip Scale", 1, default_value=([0.1]), min=0, max=10, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ enableslip == 0 } { viscosity == 0 }")
+hou_parm_template3.setTags({"export_disable": "1"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("slipusecontrolfield", "Use Control Field", default_value=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ viscosity == 0 } { enableslip == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.StringParmTemplate("slipcontrolfield", "Control Field", 1, default_value=(["slip"]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.Regular, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ enableslip == 0 } { slipusecontrolfield == 0 } { viscosity == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FolderParmTemplate("folder2_2_5_3", "Density", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("dodensity", "Density by Attribute", default_value=False)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.StringParmTemplate("densityattrib", "Attribute Name", 1, default_value=(["density"]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.Regular, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ dodensity == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.MenuParmTemplate("densitymix", "Mix Method", menu_items=(["copy","add","sub","mul","div","max","min","average"]), menu_labels=(["Copy","Add","Subtract","Multiply","Divide","Maximum","Minimum","Average"]), default_value=0, default_expression='copy', default_expression_language=hou.scriptLanguage.Hscript, icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False, is_button_strip=False, strip_uses_icons=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ dodensity == 0 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("densityscale", "Density Scale", 1, default_value=([1]), min=0, max=10, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ dodensity == 0 }")
+hou_parm_template3.setTags({"units": ""})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FolderParmTemplate("folder2_2_5_4", "Air", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("doincompressibleair", "Enforce Air Incompressibility", default_value=False)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("applycollisionstoair", "Apply Moving Collisions", default_value=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ doincompressibleair == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.IntParmTemplate("minairregionsize", "Min Air Region Voxels", 1, default_value=([0]), min=0, max=10, min_is_strict=False, max_is_strict=False, naming_scheme=hou.parmNamingScheme.Base1, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ doincompressibleair == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FolderParmTemplate("folder2_2_5_5", "Divergence", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("dodivergence", "Divergence by Attribute", default_value=False)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.StringParmTemplate("divergenceattrib", "Attribute Name", 1, default_value=(["divergence"]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.Regular, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ dodivergence == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.MenuParmTemplate("divergencemix", "Mix Method", menu_items=(["copy","add","sub","mul","div","max","min","average"]), menu_labels=(["Copy","Add","Subtract","Multiply","Divide","Maximum","Minimum","Average"]), default_value=0, default_expression='copy', default_expression_language=hou.scriptLanguage.Hscript, icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False, is_button_strip=False, strip_uses_icons=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ dodivergence == 0 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("divergencescale", "Divergence Scale", 1, default_value=([1]), min=0, max=10, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ dodivergence == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FolderParmTemplate("folder2_2_5_6", "Surface Tension", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("dosurfacetension", "Enable Surface Tension", default_value=False)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("surfacetension", "Surface Tension", 1, default_value=([10]), min=0, max=10, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ dosurfacetension == 0 }")
+hou_parm_template3.setTags({"units": "kg1m-3s-2"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("docurvatureblur", "Enable Surface Tension Blur", default_value=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ dosurfacetension == 0 } { surfacetension == 0 }")
+hou_parm_template3.setTags({"export_disable": "1"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("stblurradius", "Blur Radius", 1, default_value=([1]), min=0, max=10, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ docurvatureblur == 0 } { dosurfacetension == 0 } { surfacetension == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.MenuParmTemplate("stfilter", "Blur Filter", menu_items=(["box","cone","gaussian"]), menu_labels=(["Box","Cone","Gaussian"]), default_value=2, icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False, is_button_strip=False, strip_uses_icons=False)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ docurvatureblur == 0 } { dosurfacetension == 0 } { surfacetension == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.StringParmTemplate("stblurmaskfield", "Blur Mask Field", 1, default_value=(["surfacepressureblurmask"]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.Regular, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ docurvatureblur == 0 } { dosurfacetension == 0 } { surfacetension == 0 }")
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FolderParmTemplate("folder2_2_5_7", "Solver", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("spatialscale", "Spatial Scale", 1, default_value=([1]), min=0, max=10, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setTags({"units": "m-1"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("massscale", "Mass Scale", 1, default_value=([1]), min=0, max=10, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setTags({"units": "kg-1"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("feedbackscale", "Feedback Scale", 1, default_value=([0]), min=0, max=10, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template3.setTags({"autoscope": "0000000000000000", "units": "kg1m1s-2"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.MenuParmTemplate("extrapmode", "Extrapolation Mode", menu_items=(["normal","fastcoll"]), menu_labels=(["Normal","Fast-moving Colliders"]), default_value=0, icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False, is_button_strip=False, strip_uses_icons=False)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("autoextrapolatemaxcells", "Automatic Extrapolation By Speed", default_value=True)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FloatParmTemplate("velextrapolatemaxcells", "Max Cells to Extrapolate", 1, default_value=([4]), min=0, max=10, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("usepreconditioner", "Use Preconditioner", default_value=False, default_expression='off', default_expression_language=hou.scriptLanguage.Hscript)
+hou_parm_template3.setConditional(hou.parmCondType.DisableWhen, "{ opencl == 1 }")
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("usewarmstart", "Use Pressure to Warm Start Solver", default_value=True)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("useadaptivepressure", "Solve Pressure with Adaptivity", default_value=False)
+hou_parm_template3.setScriptCallbackLanguage(hou.scriptLanguage.Python)
+hou_parm_template3.setTags({"script_callback_language": "python"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.ToggleParmTemplate("opencl", "Use OpenCL", default_value=False, default_expression='off', default_expression_language=hou.scriptLanguage.Hscript)
+hou_parm_template3.setTags({"autoscope": "0000000000000000"})
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FolderParmTemplate("collisionfieldsfolder2", "Collision Fields For Solver", folder_type=hou.folderType.Simple, default_value=0, ends_tab_group=False)
+hou_parm_template3.setTags({"group_type": "simple"})
+# Code for parameter template
+hou_parm_template4 = hou.StringParmTemplate("collisionsurfacename", "Collision Surface", 1, default_value=(["collision"]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.Regular, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template3.addParmTemplate(hou_parm_template4)
+# Code for parameter template
+hou_parm_template4 = hou.StringParmTemplate("collisionweightsname", "Collision Weights", 1, default_value=(["collisionweights"]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.Regular, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template3.addParmTemplate(hou_parm_template4)
+# Code for parameter template
+hou_parm_template4 = hou.StringParmTemplate("collisionvelname", "Collision Velocity", 1, default_value=(["collisionvel"]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.Regular, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template3.addParmTemplate(hou_parm_template4)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.FolderParmTemplate("guidingfield2", "Guiding Fields", folder_type=hou.folderType.Simple, default_value=0, ends_tab_group=False)
+hou_parm_template3.setTags({"group_type": "simple"})
+# Code for parameter template
+hou_parm_template4 = hou.StringParmTemplate("sourcesurfacename", "Source Surface", 1, default_value=([""]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.Regular, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template3.addParmTemplate(hou_parm_template4)
+# Code for parameter template
+hou_parm_template4 = hou.StringParmTemplate("sinksurfacename", "Sink Surface", 1, default_value=([""]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.Regular, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template3.addParmTemplate(hou_parm_template4)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+hou_parm_template_group.append(hou_parm_template)
+# Code for parameter template
+hou_parm_template = hou.FolderParmTemplate("folder2_3", "Narrow Band", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template2 = hou.ToggleParmTemplate("donarrowband", "Enable Particle Narrow Band", default_value=False)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FloatParmTemplate("narrowbandwidth", "Bandwidth", 1, default_value=([3]), min=3, max=10, min_is_strict=False, max_is_strict=False, look=hou.parmLook.Regular, naming_scheme=hou.parmNamingScheme.Base1)
+hou_parm_template2.setConditional(hou.parmCondType.DisableWhen, "{ donarrowband == 0 }")
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.FolderParmTemplate("attributefieldpairs", "Attribute-Field Pairs", folder_type=hou.folderType.MultiparmBlock, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template3 = hou.StringParmTemplate("attributepair#", "Attribute", 1, default_value=([""]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.Regular, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+# Code for parameter template
+hou_parm_template3 = hou.StringParmTemplate("fieldpair#", "Field", 1, default_value=([""]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.Regular, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template2.addParmTemplate(hou_parm_template3)
+hou_parm_template.addParmTemplate(hou_parm_template2)
+hou_parm_template_group.append(hou_parm_template)
+# Code for parameter template
+hou_parm_template = hou.FolderParmTemplate("folder2_4", "Distribution", folder_type=hou.folderType.Tabs, default_value=0, ends_tab_group=False)
+# Code for parameter template
+hou_parm_template2 = hou.StringParmTemplate("address", "Tracker Address", 1, default_value=([""]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.Regular, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template2.setTags({"autoscope": "0000000000000000"})
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.IntParmTemplate("port", "Tracker Port", 1, default_value=([8000]), min=0, max=10, min_is_strict=False, max_is_strict=False, naming_scheme=hou.parmNamingScheme.Base1, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False)
+hou_parm_template2.setTags({"autoscope": "0000000000000000"})
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.StringParmTemplate("jobname", "Job Name", 1, default_value=(["${OS}_$F"]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.Regular, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template2.setTags({"autoscope": "0000000000000000"})
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.IntParmTemplate("slice", "Slice", 1, default_value=([0]), min=0, max=10, min_is_strict=False, max_is_strict=False, naming_scheme=hou.parmNamingScheme.Base1, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False)
+hou_parm_template2.setTags({"autoscope": "0000000000000000"})
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.IntParmTemplate("numslice", "Number of Slices", 1, default_value=([1]), min=0, max=10, min_is_strict=False, max_is_strict=False, naming_scheme=hou.parmNamingScheme.Base1, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal, menu_use_token=False)
+hou_parm_template2.setTags({"autoscope": "0000000000000000"})
+hou_parm_template.addParmTemplate(hou_parm_template2)
+# Code for parameter template
+hou_parm_template2 = hou.ToggleParmTemplate("dodistributedsolve", "Distributed Pressure Solve", default_value=False)
+hou_parm_template2.setTags({"autoscope": "0000000000000000"})
+hou_parm_template.addParmTemplate(hou_parm_template2)
+hou_parm_template_group.append(hou_parm_template)
+# Code for parameter template
+hou_parm_template = hou.StringParmTemplate("spare_input0", "Spare Input 0", 1, default_value=([""]), naming_scheme=hou.parmNamingScheme.Base1, string_type=hou.stringParmType.NodeReference, menu_items=([]), menu_labels=([]), icon_names=([]), item_generator_script="", item_generator_script_language=hou.scriptLanguage.Python, menu_type=hou.menuType.Normal)
+hou_parm_template.setHelp("Refer to this in expressions as -1, such as: npoints(-1)")
+hou_parm_template.setTags({"cook_dependent": "1", "opfilter": "!!SOP!!", "oprelative": "."})
+hou_parm_template_group.append(hou_parm_template)
+hou_node.setParmTemplateGroup(hou_parm_template_group)
+# Code for /obj/BEACH_FLIP/flipsolver1/folder01 parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("folder01")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(2)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/timescale parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("timescale")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/minimumsubsteps parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("minimumsubsteps")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/substeps parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("substeps")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(2)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/cflcond parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("cflcond")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/partcflcond parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("partcflcond")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0.75)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/quantize parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("quantize")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/doforces parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("doforces")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/enablevolumeattrib parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("enablevolumeattrib")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/volumeoverrideattrib parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("volumeoverrideattrib")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("ballistic")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/underresolved parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("underresolved")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("extrapolated")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/collision parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("collision")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("particle")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/killunmoveable parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("killunmoveable")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/folder11 parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("folder11")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/tankcollision parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("tankcollision")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/killoutside parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("killoutside")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/usephysparms parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("usephysparms")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/doid parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("doid")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/doage parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("doage")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/doreapparticles parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("doreapparticles")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/delattribs parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("delattribs")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("underresolved")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/reseed parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("reseed")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/partpervoxel parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("partpervoxel")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(8)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/oversampling parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("oversampling")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1.5)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/oversamplingbandwidth parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("oversamplingbandwidth")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/oversamplebounds parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("oversamplebounds")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/birththreshold parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("birththreshold")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0.5)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/deaththreshold parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("deaththreshold")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1.5)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/seed parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("seed")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/interpattribs parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("interpattribs")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("v vorticity rest rest2")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/partsep parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("partsep")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/partsepiter parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("partsepiter")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/partsepamount parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("partsepamount")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/partsepscale parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("partsepscale")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1.0985)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/dodroplets parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("dodroplets")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/dropletmindensity parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("dropletmindensity")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0.5)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/dropletmaxdensity parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("dropletmaxdensity")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/dropletbehavior parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("dropletbehavior")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("0")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/dropletvelblend parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("dropletvelblend")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0.20000000000000001)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/dovorticity parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("dovorticity")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/vorticitypreserve parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("vorticitypreserve")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0.10000000000000001)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/vorticitymix parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("vorticitymix")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("max")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/vorticityscale parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("vorticityscale")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/enable_rest parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("enable_rest")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/dual_rest_attributes parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("dual_rest_attributes")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/rest_framedelay parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("rest_framedelay")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(50)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/rest_frameoffset parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("rest_frameoffset")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/veltransfer parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("veltransfer")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("flip")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/volumeamount parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("volumeamount")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/smoothing parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("smoothing")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0.10000000000000001)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/surfacereinit parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("surfacereinit")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/updatesurface parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("updatesurface")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("advect")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/updatevel parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("updatevel")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("advect")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/folder2_2_41 parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("folder2_2_41")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/vislimit parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("vislimit")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/vislimitcolor parm tuple
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm_tuple = hou_node.parmTuple("vislimitcolor")
+hou_parm_tuple.lock((False, False, False))
+hou_parm_tuple.deleteAllKeyframes()
+hou_parm_tuple.set((0.49773000000000001, 0.37530000000000002, 0.90000000000000002))
+hou_parm_tuple.setAutoscope((False, False, False))
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/limit_size parm tuple
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm_tuple = hou_node.parmTuple("limit_size")
+hou_parm_tuple.lock((False, False, False))
+hou_parm_tuple.deleteAllKeyframes()
+hou_parm_tuple.set((0, 0, 0))
+hou_parm_tuple.setAutoscope((False, False, False))
+
+# Code for first keyframe.
+# Code for keyframe.
+hou_keyframe = hou.Keyframe()
+hou_keyframe.setTime(0)
+hou_keyframe.setValue(0)
+hou_keyframe.setInValue(0)
+hou_keyframe.useValue(False)
+hou_keyframe.setSlope(0)
+hou_keyframe.setInSlope(0)
+hou_keyframe.useSlope(False)
+hou_keyframe.setAccel(0)
+hou_keyframe.useAccel(False)
+hou_keyframe.interpretAccelAsRatio(False)
+hou_keyframe.setExpression("bbox(-1, D_XSIZE)", hou.exprLanguage.Hscript)
+hou_parm_tuple[0].setKeyframe(hou_keyframe)
+
+# Code for last keyframe.
+# Code for keyframe.
+hou_keyframe = hou.Keyframe()
+hou_keyframe.setTime(0)
+hou_keyframe.setValue(0)
+hou_keyframe.setInValue(0)
+hou_keyframe.useValue(False)
+hou_keyframe.setSlope(0)
+hou_keyframe.setInSlope(0)
+hou_keyframe.useSlope(False)
+hou_keyframe.setAccel(0)
+hou_keyframe.useAccel(False)
+hou_keyframe.interpretAccelAsRatio(False)
+hou_keyframe.setExpression("bbox(-1, D_XSIZE)", hou.exprLanguage.Hscript)
+hou_parm_tuple[0].setKeyframe(hou_keyframe)
+
+# Code for keyframe.
+hou_keyframe = hou.Keyframe()
+hou_keyframe.setTime(0)
+hou_keyframe.setValue(0)
+hou_keyframe.setInValue(0)
+hou_keyframe.useValue(False)
+hou_keyframe.setSlope(0)
+hou_keyframe.setInSlope(0)
+hou_keyframe.useSlope(False)
+hou_keyframe.setAccel(0)
+hou_keyframe.useAccel(False)
+hou_keyframe.interpretAccelAsRatio(False)
+hou_keyframe.setExpression("bbox(-1, D_XSIZE)", hou.exprLanguage.Hscript)
+hou_parm_tuple[0].setKeyframe(hou_keyframe)
+
+# Code for first keyframe.
+# Code for keyframe.
+hou_keyframe = hou.Keyframe()
+hou_keyframe.setTime(0)
+hou_keyframe.setValue(0)
+hou_keyframe.setInValue(0)
+hou_keyframe.useValue(False)
+hou_keyframe.setSlope(0)
+hou_keyframe.setInSlope(0)
+hou_keyframe.useSlope(False)
+hou_keyframe.setAccel(0)
+hou_keyframe.useAccel(False)
+hou_keyframe.interpretAccelAsRatio(False)
+hou_keyframe.setExpression("bbox(-1, D_YSIZE)", hou.exprLanguage.Hscript)
+hou_parm_tuple[1].setKeyframe(hou_keyframe)
+
+# Code for last keyframe.
+# Code for keyframe.
+hou_keyframe = hou.Keyframe()
+hou_keyframe.setTime(0)
+hou_keyframe.setValue(0)
+hou_keyframe.setInValue(0)
+hou_keyframe.useValue(False)
+hou_keyframe.setSlope(0)
+hou_keyframe.setInSlope(0)
+hou_keyframe.useSlope(False)
+hou_keyframe.setAccel(0)
+hou_keyframe.useAccel(False)
+hou_keyframe.interpretAccelAsRatio(False)
+hou_keyframe.setExpression("bbox(-1, D_YSIZE)", hou.exprLanguage.Hscript)
+hou_parm_tuple[1].setKeyframe(hou_keyframe)
+
+# Code for keyframe.
+hou_keyframe = hou.Keyframe()
+hou_keyframe.setTime(0)
+hou_keyframe.setValue(0)
+hou_keyframe.setInValue(0)
+hou_keyframe.useValue(False)
+hou_keyframe.setSlope(0)
+hou_keyframe.setInSlope(0)
+hou_keyframe.useSlope(False)
+hou_keyframe.setAccel(0)
+hou_keyframe.useAccel(False)
+hou_keyframe.interpretAccelAsRatio(False)
+hou_keyframe.setExpression("bbox(-1, D_YSIZE)", hou.exprLanguage.Hscript)
+hou_parm_tuple[1].setKeyframe(hou_keyframe)
+
+# Code for first keyframe.
+# Code for keyframe.
+hou_keyframe = hou.Keyframe()
+hou_keyframe.setTime(0)
+hou_keyframe.setValue(0)
+hou_keyframe.setInValue(0)
+hou_keyframe.useValue(False)
+hou_keyframe.setSlope(0)
+hou_keyframe.setInSlope(0)
+hou_keyframe.useSlope(False)
+hou_keyframe.setAccel(0)
+hou_keyframe.useAccel(False)
+hou_keyframe.interpretAccelAsRatio(False)
+hou_keyframe.setExpression("bbox(-1, D_ZSIZE)", hou.exprLanguage.Hscript)
+hou_parm_tuple[2].setKeyframe(hou_keyframe)
+
+# Code for last keyframe.
+# Code for keyframe.
+hou_keyframe = hou.Keyframe()
+hou_keyframe.setTime(0)
+hou_keyframe.setValue(0)
+hou_keyframe.setInValue(0)
+hou_keyframe.useValue(False)
+hou_keyframe.setSlope(0)
+hou_keyframe.setInSlope(0)
+hou_keyframe.useSlope(False)
+hou_keyframe.setAccel(0)
+hou_keyframe.useAccel(False)
+hou_keyframe.interpretAccelAsRatio(False)
+hou_keyframe.setExpression("bbox(-1, D_ZSIZE)", hou.exprLanguage.Hscript)
+hou_parm_tuple[2].setKeyframe(hou_keyframe)
+
+# Code for keyframe.
+hou_keyframe = hou.Keyframe()
+hou_keyframe.setTime(0)
+hou_keyframe.setValue(0)
+hou_keyframe.setInValue(0)
+hou_keyframe.useValue(False)
+hou_keyframe.setSlope(0)
+hou_keyframe.setInSlope(0)
+hou_keyframe.useSlope(False)
+hou_keyframe.setAccel(0)
+hou_keyframe.useAccel(False)
+hou_keyframe.interpretAccelAsRatio(False)
+hou_keyframe.setExpression("bbox(-1, D_ZSIZE)", hou.exprLanguage.Hscript)
+hou_parm_tuple[2].setKeyframe(hou_keyframe)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/limit_t parm tuple
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm_tuple = hou_node.parmTuple("limit_t")
+hou_parm_tuple.lock((False, False, False))
+hou_parm_tuple.deleteAllKeyframes()
+hou_parm_tuple.set((0, 0, 0))
+hou_parm_tuple.setAutoscope((False, False, False))
+
+# Code for first keyframe.
+# Code for keyframe.
+hou_keyframe = hou.Keyframe()
+hou_keyframe.setTime(0)
+hou_keyframe.setValue(0)
+hou_keyframe.setInValue(0)
+hou_keyframe.useValue(False)
+hou_keyframe.setSlope(0)
+hou_keyframe.setInSlope(0)
+hou_keyframe.useSlope(False)
+hou_keyframe.setAccel(0)
+hou_keyframe.useAccel(False)
+hou_keyframe.interpretAccelAsRatio(False)
+hou_keyframe.setExpression("centroid(-1, D_X)", hou.exprLanguage.Hscript)
+hou_parm_tuple[0].setKeyframe(hou_keyframe)
+
+# Code for last keyframe.
+# Code for keyframe.
+hou_keyframe = hou.Keyframe()
+hou_keyframe.setTime(0)
+hou_keyframe.setValue(0)
+hou_keyframe.setInValue(0)
+hou_keyframe.useValue(False)
+hou_keyframe.setSlope(0)
+hou_keyframe.setInSlope(0)
+hou_keyframe.useSlope(False)
+hou_keyframe.setAccel(0)
+hou_keyframe.useAccel(False)
+hou_keyframe.interpretAccelAsRatio(False)
+hou_keyframe.setExpression("centroid(-1, D_X)", hou.exprLanguage.Hscript)
+hou_parm_tuple[0].setKeyframe(hou_keyframe)
+
+# Code for keyframe.
+hou_keyframe = hou.Keyframe()
+hou_keyframe.setTime(0)
+hou_keyframe.setValue(0)
+hou_keyframe.setInValue(0)
+hou_keyframe.useValue(False)
+hou_keyframe.setSlope(0)
+hou_keyframe.setInSlope(0)
+hou_keyframe.useSlope(False)
+hou_keyframe.setAccel(0)
+hou_keyframe.useAccel(False)
+hou_keyframe.interpretAccelAsRatio(False)
+hou_keyframe.setExpression("centroid(-1, D_X)", hou.exprLanguage.Hscript)
+hou_parm_tuple[0].setKeyframe(hou_keyframe)
+
+# Code for first keyframe.
+# Code for keyframe.
+hou_keyframe = hou.Keyframe()
+hou_keyframe.setTime(0)
+hou_keyframe.setValue(0)
+hou_keyframe.setInValue(0)
+hou_keyframe.useValue(False)
+hou_keyframe.setSlope(0)
+hou_keyframe.setInSlope(0)
+hou_keyframe.useSlope(False)
+hou_keyframe.setAccel(0)
+hou_keyframe.useAccel(False)
+hou_keyframe.interpretAccelAsRatio(False)
+hou_keyframe.setExpression("centroid(-1, D_Y)", hou.exprLanguage.Hscript)
+hou_parm_tuple[1].setKeyframe(hou_keyframe)
+
+# Code for last keyframe.
+# Code for keyframe.
+hou_keyframe = hou.Keyframe()
+hou_keyframe.setTime(0)
+hou_keyframe.setValue(0)
+hou_keyframe.setInValue(0)
+hou_keyframe.useValue(False)
+hou_keyframe.setSlope(0)
+hou_keyframe.setInSlope(0)
+hou_keyframe.useSlope(False)
+hou_keyframe.setAccel(0)
+hou_keyframe.useAccel(False)
+hou_keyframe.interpretAccelAsRatio(False)
+hou_keyframe.setExpression("centroid(-1, D_Y)", hou.exprLanguage.Hscript)
+hou_parm_tuple[1].setKeyframe(hou_keyframe)
+
+# Code for keyframe.
+hou_keyframe = hou.Keyframe()
+hou_keyframe.setTime(0)
+hou_keyframe.setValue(0)
+hou_keyframe.setInValue(0)
+hou_keyframe.useValue(False)
+hou_keyframe.setSlope(0)
+hou_keyframe.setInSlope(0)
+hou_keyframe.useSlope(False)
+hou_keyframe.setAccel(0)
+hou_keyframe.useAccel(False)
+hou_keyframe.interpretAccelAsRatio(False)
+hou_keyframe.setExpression("centroid(-1, D_Y)", hou.exprLanguage.Hscript)
+hou_parm_tuple[1].setKeyframe(hou_keyframe)
+
+# Code for first keyframe.
+# Code for keyframe.
+hou_keyframe = hou.Keyframe()
+hou_keyframe.setTime(0)
+hou_keyframe.setValue(0)
+hou_keyframe.setInValue(0)
+hou_keyframe.useValue(False)
+hou_keyframe.setSlope(0)
+hou_keyframe.setInSlope(0)
+hou_keyframe.useSlope(False)
+hou_keyframe.setAccel(0)
+hou_keyframe.useAccel(False)
+hou_keyframe.interpretAccelAsRatio(False)
+hou_keyframe.setExpression("centroid(-1, D_Z)", hou.exprLanguage.Hscript)
+hou_parm_tuple[2].setKeyframe(hou_keyframe)
+
+# Code for last keyframe.
+# Code for keyframe.
+hou_keyframe = hou.Keyframe()
+hou_keyframe.setTime(0)
+hou_keyframe.setValue(0)
+hou_keyframe.setInValue(0)
+hou_keyframe.useValue(False)
+hou_keyframe.setSlope(0)
+hou_keyframe.setInSlope(0)
+hou_keyframe.useSlope(False)
+hou_keyframe.setAccel(0)
+hou_keyframe.useAccel(False)
+hou_keyframe.interpretAccelAsRatio(False)
+hou_keyframe.setExpression("centroid(-1, D_Z)", hou.exprLanguage.Hscript)
+hou_parm_tuple[2].setKeyframe(hou_keyframe)
+
+# Code for keyframe.
+hou_keyframe = hou.Keyframe()
+hou_keyframe.setTime(0)
+hou_keyframe.setValue(0)
+hou_keyframe.setInValue(0)
+hou_keyframe.useValue(False)
+hou_keyframe.setSlope(0)
+hou_keyframe.setInSlope(0)
+hou_keyframe.useSlope(False)
+hou_keyframe.setAccel(0)
+hou_keyframe.useAccel(False)
+hou_keyframe.interpretAccelAsRatio(False)
+hou_keyframe.setExpression("centroid(-1, D_Z)", hou.exprLanguage.Hscript)
+hou_parm_tuple[2].setKeyframe(hou_keyframe)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/dynamicresize parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("dynamicresize")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/fillnewvolume parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("fillnewvolume")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/usewaterline parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("usewaterline")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/visualwaterline parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("visualwaterline")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/waterline parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("waterline")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/waterlinedirection parm tuple
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm_tuple = hou_node.parmTuple("waterlinedirection")
+hou_parm_tuple.lock((False, False, False))
+hou_parm_tuple.deleteAllKeyframes()
+hou_parm_tuple.set((0, 1, 0))
+hou_parm_tuple.setAutoscope((False, False, False))
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/useboundarylayer parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("useboundarylayer")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/applybound parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("applybound")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/boundary_lowerpadding parm tuple
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm_tuple = hou_node.parmTuple("boundary_lowerpadding")
+hou_parm_tuple.lock((False, False, False))
+hou_parm_tuple.deleteAllKeyframes()
+hou_parm_tuple.set((0, 0, 0))
+hou_parm_tuple.setAutoscope((False, False, False))
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/boundary_upperpadding parm tuple
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm_tuple = hou_node.parmTuple("boundary_upperpadding")
+hou_parm_tuple.lock((False, False, False))
+hou_parm_tuple.deleteAllKeyframes()
+hou_parm_tuple.set((0, 0, 0))
+hou_parm_tuple.setAutoscope((False, False, False))
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/boundary_surface parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("boundary_surface")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/boundary_velocity parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("boundary_velocity")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/collisionvelscale parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("collisionvelscale")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/veltype parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("veltype")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("point")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/extrapdist parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("extrapdist")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0.5)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/fractionmethod parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("fractionmethod")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("face")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/numsupersamples parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("numsupersamples")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(2)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/usetransparency parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("usetransparency")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/transparency parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("transparency")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/stickoncollisionfolder parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("stickoncollisionfolder")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/enablestick parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("enablestick")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/stickscale parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("stickscale")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0.10000000000000001)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/stickusemaxdist parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("stickusemaxdist")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/stickdist parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("stickdist")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0.050000000000000003)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/stickusemaxcells parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("stickusemaxcells")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/stickcells parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("stickcells")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/stickbias parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("stickbias")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0.5)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/sticknormalscale parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("sticknormalscale")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/sticktangentscale parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("sticktangentscale")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/stickusecontrolfield parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("stickusecontrolfield")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/stickcontrolfield parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("stickcontrolfield")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("stick")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/viscosity parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("viscosity")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/useadaptiveviscosity parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("useadaptiveviscosity")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/doviscosity parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("doviscosity")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/viscosityattrib parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("viscosityattrib")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("viscosity")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/viscositymix parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("viscositymix")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("copy")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/viscosityscale parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("viscosityscale")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/viscosityprecision parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("viscosityprecision")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("f64b")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/enableslip parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("enableslip")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/slipscale parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("slipscale")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0.10000000000000001)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/slipusecontrolfield parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("slipusecontrolfield")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/slipcontrolfield parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("slipcontrolfield")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("slip")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/dodensity parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("dodensity")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/densityattrib parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("densityattrib")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("density")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/densitymix parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("densitymix")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("copy")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/densityscale parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("densityscale")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/doincompressibleair parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("doincompressibleair")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/applycollisionstoair parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("applycollisionstoair")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/minairregionsize parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("minairregionsize")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/dodivergence parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("dodivergence")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/divergenceattrib parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("divergenceattrib")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("divergence")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/divergencemix parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("divergencemix")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("copy")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/divergencescale parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("divergencescale")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/dosurfacetension parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("dosurfacetension")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/surfacetension parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("surfacetension")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(10)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/docurvatureblur parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("docurvatureblur")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/stblurradius parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("stblurradius")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/stfilter parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("stfilter")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("gaussian")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/stblurmaskfield parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("stblurmaskfield")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("surfacepressureblurmask")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/spatialscale parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("spatialscale")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/massscale parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("massscale")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/feedbackscale parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("feedbackscale")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/extrapmode parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("extrapmode")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("normal")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/autoextrapolatemaxcells parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("autoextrapolatemaxcells")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/velextrapolatemaxcells parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("velextrapolatemaxcells")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(4)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/usepreconditioner parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("usepreconditioner")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/usewarmstart parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("usewarmstart")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/useadaptivepressure parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("useadaptivepressure")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/opencl parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("opencl")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/collisionfieldsfolder parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("collisionfieldsfolder")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/collisionsurfacename parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("collisionsurfacename")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("collision")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/collisionweightsname parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("collisionweightsname")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("collisionweights")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/collisionvelname parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("collisionvelname")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("collisionvel")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/guidingfield parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("guidingfield")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/sourcesurfacename parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("sourcesurfacename")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/sinksurfacename parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("sinksurfacename")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/donarrowband parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("donarrowband")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/narrowbandwidth parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("narrowbandwidth")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(3)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/attributefieldpairs parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("attributefieldpairs")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/address parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("address")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/port parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("port")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(8000)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/jobname parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("jobname")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("${OS}_$F")
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/slice parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("slice")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/numslice parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("numslice")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/dodistributedsolve parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("dodistributedsolve")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/folder21 parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("folder21")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(1)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/folder31 parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("folder31")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/folder2_2_51 parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("folder2_2_51")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(5)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/stickoncollisionfolder2 parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("stickoncollisionfolder2")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/collisionfieldsfolder2 parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("collisionfieldsfolder2")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/guidingfield2 parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("guidingfield2")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set(0)
+hou_parm.setAutoscope(False)
+
+
+# Code for /obj/BEACH_FLIP/flipsolver1/spare_input0 parm 
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/BEACH_FLIP/flipsolver1")
+hou_parm = hou_node.parm("spare_input0")
+hou_parm.lock(False)
+hou_parm.deleteAllKeyframes()
+hou_parm.set("/obj/FLIP_SOURCE/BBOX")
+hou_parm.setAutoscope(False)
+
+
+hou_node.setExpressionLanguage(hou.exprLanguage.Hscript)
+
+# Code to establish connections for /obj/BEACH_FLIP/flipsolver1
+hou_node = hou_parent.node("flipsolver1")
+if hou_parent.node("flipobject1") is not None:
+    hou_node.setInput(0, hou_parent.node("flipobject1"), 0)
+if hou_parent.node("popcolor1") is not None:
+    hou_node.setInput(1, hou_parent.node("popcolor1"), 0)
+if hou_parent.node("merge3") is not None:
+    hou_node.setInput(3, hou_parent.node("merge3"), 0)
+hou_node.setUserData("___toolid___", "dynamics_flipbox")
+hou_node.setUserData("___Version___", "")
+hou_node.setUserData("___toolcount___", "1")
+if hasattr(hou_node, "syncNodeVersionIfNeeded"):
+    hou_node.syncNodeVersionIfNeeded("")
