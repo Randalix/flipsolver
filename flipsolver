@@ -1171,7 +1171,7 @@ if locals().get("hou_node") is None:
 hou_parm = hou_node.parm("smoothing")
 hou_parm.lock(False)
 hou_parm.deleteAllKeyframes()
-hou_parm.set(0.10000000000000001)
+hou_parm.set(0.11)
 hou_parm.setAutoscope(False)
 
 
@@ -2393,7 +2393,7 @@ if locals().get("hou_node") is None:
 hou_parm = hou_node.parm("folder21")
 hou_parm.lock(False)
 hou_parm.deleteAllKeyframes()
-hou_parm.set(1)
+hou_parm.set(2)
 hou_parm.setAutoscope(False)
 
 
